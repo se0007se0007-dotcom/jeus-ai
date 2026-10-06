@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jeus.ai | LLM·AI 비용을 통제하는 게이트웨이</title>
+    <meta
+      name="description"
+      content="Jeus.ai는 모든 LLM 호출이 거쳐가는 AI 비용·거버넌스 게이트웨이입니다. 캐싱·라우팅으로 토큰 비용을 30~60% 절감하고, 온프레미스로 보안·감사까지. 에이전트 FinOps 포함."
+    />
+    <link rel="icon" href="favicon.svg" />
+    <meta property="og:title" content="Jeus.ai | LLM·AI 비용을 통제하는 게이트웨이" />
+    <meta
+      property="og:description"
+      content="모든 LLM 호출을 거쳐가는 AI 비용·거버넌스 게이트웨이 — 캐싱·라우팅으로 30~60% 절감."
+    />
+    <meta property="og:image" content="https://jeus.ai.kr/screenshot.jpeg" />
+    <link rel="canonical" href="https://jeus.ai.kr/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jeus.ai.kr/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jeus.ai | LLM·AI 비용을 통제하는 게이트웨이" />
+    <meta name="twitter:image" content="https://jeus.ai.kr/screenshot.jpeg" />
+    <meta name="theme-color" content="#1fa8f0" />
+    <meta name="keywords" content="Agent FinOps, LLM 비용 절감, AI 에이전트 비용, 토큰 비용 최적화, AI 비용 관리, FinOps, Jeus.ai, Jeus.fin, AI 거버넌스" />
+    <style>
+      :root {
+        --sky: #1fa8f0;
+        --sky-deep: #0c79bf;
+        --green: #1c9b64;
+        --amber: #c77d12;
+        --coral: #df5b4f;
+        --ink: #121820;
+        --sub: #5d6876;
+        --muted: #8a96a5;
+        --line: #e8edf2;
+        --band: #f7fbfe;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: #fff;
+        color: var(--ink);
+        font-family: Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+      .site-nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        min-height: 66px;
+        padding: 0 44px;
+        border-bottom: 1px solid rgba(232, 237, 242, 0.9);
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(14px);
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 850;
+      }
+      .logo span,
+      .eyebrow,
+      .text-button,
+      .card-topline em,
+      .solution-card strong {
+        color: var(--sky-deep);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        color: var(--sub);
+        font-size: 15px;
+        font-weight: 650;
+      }
+      .nav-links a:hover {
+        color: var(--ink);
+      }
+      .nav-cta,
+      .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 0 20px;
+        border-radius: 8px;
+        background: var(--sky);
+        color: #fff;
+        font-weight: 800;
+        box-shadow: 0 10px 22px rgba(31, 168, 240, 0.2);
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+        align-items: center;
+        gap: 42px;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 86px 44px 48px;
+      }
+      .eyebrow {
+        margin: 0 0 14px;
+        font-size: 13px;
+        font-weight: 850;
+      }
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(52px, 8vw, 92px);
+        line-height: 0.95;
+      }
+      .hero-lead {
+        margin: 20px 0 0;
+        font-size: clamp(26px, 3.5vw, 44px);
+        font-weight: 850;
+        line-height: 1.24;
+      }
+      .hero-copy {
+        max-width: 620px;
+        margin: 22px 0 0;
+        color: var(--sub);
+        font-size: 18px;
+      }
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 32px;
+      }
+      .text-button {
+        font-weight: 850;
+      }
+      .hero-note {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .hero-image {
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 32px 70px -34px rgba(19, 68, 104, 0.45);
+      }
+      .signal-band {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: var(--line);
+      }
+      .signal-band div {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 12px;
+        min-height: 92px;
+        background: var(--band);
+      }
+      .signal-band b {
+        color: var(--sky-deep);
+        font-size: clamp(26px, 4vw, 40px);
+        line-height: 1;
+      }
+      .signal-band span {
+        color: var(--sub);
+        font-weight: 700;
+      }
+      .section {
+        max-width: 1160px;
+        margin: 0 auto;
+        padding: 104px 44px;
+      }
+      .section-head {
+        max-width: 720px;
+        margin-bottom: 38px;
+      }
+      h2 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 46px);
+        font-weight: 850;
+        line-height: 1.25;
+      }
+      .section-head p:not(.eyebrow),
+      .split p,
+      .cta-section p {
+        margin: 16px 0 0;
+        color: var(--sub);
+        font-size: 17px;
+      }
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .plain-card,
+      .solution-card,
+      .process-card,
+      .metrics-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 28px;
+      }
+      .plain-card {
+        min-height: 240px;
+      }
+      .plain-card.compact {
+        min-height: 0;
+      }
+      .card-number {
+        display: block;
+        margin-bottom: 18px;
+        color: var(--sky);
+        font-size: 13px;
+        font-weight: 900;
+      }
+      h3 {
+        margin: 0 0 10px;
+        font-size: 20px;
+        line-height: 1.35;
+      }
+      .plain-card p,
+      .solution-card p,
+      .process-card p {
+        margin: 0;
+        color: var(--sub);
+        font-size: 15px;
+      }
+      .solution-band,
+      .trust-section {
+        max-width: none;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .solution-band {
+        background: linear-gradient(180deg, #fff 0%, #f4fbff 100%);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 0.78fr);
+        gap: 56px;
+        align-items: center;
+        max-width: 1160px;
+        margin: 0 auto;
+      }
+      .check-list {
+        display: grid;
+        gap: 12px;
+        margin: 28px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+      .check-list li {
+        position: relative;
+        padding-left: 28px;
+        color: var(--sub);
+        font-size: 15px;
+      }
+      .check-list li::before {
+        position: absolute;
+        left: 0;
+        top: 3px;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--sky);
+        border-radius: 50%;
+        content: "";
+      }
+      .metrics-panel {
+        border-color: #c9e7f8;
+        box-shadow: 0 24px 55px -32px rgba(13, 91, 143, 0.4);
+      }
+      .panel-top,
+      .metric-row,
+      .card-topline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      .panel-top {
+        margin-bottom: 22px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .metric-row {
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
+      }
+      .metric-row span {
+        color: var(--sub);
+      }
+      .metric-row b {
+        font-size: 22px;
+      }
+      .metric-row .good {
+        color: var(--green);
+      }
+      .budget-gauge {
+        height: 10px;
+        margin-top: 18px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #edf2f6;
+      }
+      .budget-gauge i {
+        display: block;
+        width: 72%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--green), var(--amber), var(--coral));
+      }
+      .agent-rows {
+        display: grid;
+        gap: 12px;
+        margin-top: 26px;
+      }
+      .agent-rows span {
+        height: 12px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--sky), #7fd0fb) left / var(--w) 100% no-repeat, #edf3f8;
+      }
+      .card-topline {
+        margin-bottom: 24px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 850;
+      }
+      .card-topline em {
+        font-style: normal;
+      }
+      .solution-card strong {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 15px;
+      }
+      .trust-section {
+        background: var(--band);
+      }
+      .trust-section .section-head,
+      .trust-section .card-grid {
+        max-width: 1160px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .process-section {
+        text-align: center;
+      }
+      .process-section .section-head {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .process-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+      .process-card {
+        text-align: left;
+      }
+      .process-card span {
+        display: block;
+        margin-bottom: 18px;
+        color: var(--sky);
+        font-size: 13px;
+        font-weight: 900;
+      }
+      .cta-section {
+        padding: 92px 44px;
+        background: var(--sky);
+        color: #fff;
+        text-align: center;
+      }
+      .cta-section > div {
+        max-width: 760px;
+        margin: 0 auto;
+      }
+      .cta-section .eyebrow,
+      .cta-section p {
+        color: rgba(255, 255, 255, 0.86);
+      }
+      .primary-button.light {
+        margin-top: 30px;
+        background: #fff;
+        color: var(--sky-deep);
+        box-shadow: 0 16px 30px rgba(0, 71, 118, 0.2);
+      }
+      footer {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 46px 44px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer b {
+        color: var(--ink);
+        font-size: 20px;
+      }
+      footer p {
+        margin: 8px 0 0;
+      }
+      .footer-links {
+        display: flex;
+        gap: 22px;
+        color: var(--sub);
+        font-weight: 700;
+      }
+      @media (max-width: 980px) {
+        .site-nav {
+          padding: 0 24px;
+        }
+        .nav-links a:not(.nav-cta) {
+          display: none;
+        }
+        .hero,
+        .card-grid,
+        .split,
+        .process-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero {
+          padding: 62px 24px 34px;
+        }
+        .section,
+        .solution-band,
+        .trust-section {
+          padding: 78px 24px;
+        }
+      }
+      @media (max-width: 680px) {
+        .site-nav {
+          min-height: 60px;
+        }
+        .hero h1 {
+          font-size: 50px;
+        }
+        .hero-lead {
+          font-size: 28px;
+        }
+        .signal-band {
+          grid-template-columns: 1fr;
+        }
+        .signal-band div {
+          min-height: 76px;
+          justify-content: flex-start;
+          padding: 0 24px;
+        }
+        .plain-card,
+        .solution-card,
+        .process-card,
+        .metrics-panel {
+          padding: 22px;
+        }
+        footer {
+          flex-direction: column;
+          padding: 38px 24px;
+        }
+      }
+    </style>
+    <style>
+      .nav-admin {
+        font-size: 13px; font-weight: 700; color: var(--muted);
+        border: 1px solid var(--line); border-radius: 7px; padding: 6px 12px;
+      }
+      .nav-admin:hover { color: var(--ink); border-color: var(--sky); }
+      /* 고객사 로고 마퀴 */
+      .customers { padding: 30px 0 12px; border-bottom: 1px solid var(--line); overflow: hidden; }
+      .customers .eyebrow { text-align: center; margin: 0 0 18px; }
+      .marquee { position: relative; width: 100%; overflow: hidden;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+        mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+      .marquee-track { display: flex; width: max-content; gap: 56px; align-items: center;
+        animation: marquee 32s linear infinite; }
+      .customers:hover .marquee-track { animation-play-state: paused; }
+      .marquee-track img { height: 38px; width: auto; opacity: .82; filter: grayscale(1); transition: .25s; }
+      .marquee-track img:hover { opacity: 1; filter: none; }
+      @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+      /* 라이브 데모 임베드 */
+      .demo-section { background: var(--band); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .demo-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+      .demo-frame-wrap { position: relative; border: 1px solid var(--line); border-radius: 16px;
+        overflow: hidden; box-shadow: 0 24px 60px rgba(18, 24, 32, 0.16); background: #0d1117; }
+      .demo-frame-wrap iframe { display: block; width: 100%; height: 760px; border: 0; }
+      .demo-tag { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 750;
+        color: var(--sky-deep); background: rgba(31, 168, 240, 0.12); border-radius: 999px; padding: 5px 14px; }
+      .demo-note { color: var(--sub); font-size: 14px; margin-top: 14px; }
+      @media (max-width: 720px) { .demo-frame-wrap iframe { height: 560px; } }
+    </style>
+    <style>
+      #roi .roi-card{display:grid;grid-template-columns:1fr 1fr;gap:26px;border:1px solid var(--line);border-radius:16px;padding:28px;background:var(--band);box-shadow:0 14px 40px rgba(18,24,32,.06);}
+      #roi .roi-inputs label{display:block;font-weight:750;font-size:14px;margin-bottom:22px;color:var(--ink);}
+      #roi .roi-inputs input[type=number]{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:9px;padding:12px 14px;font-size:17px;font-weight:700;color:var(--ink);}
+      #roi .roi-inputs input[type=range]{width:100%;margin-top:10px;accent-color:var(--sky);}
+      #roi .roi-inputs small{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-top:6px;}
+      #roi .roi-out{display:flex;flex-direction:column;justify-content:center;gap:14px;}
+      #roi .roi-kpi{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:12px;}
+      #roi .roi-kpi span{color:var(--sub);font-weight:650;font-size:14px;}
+      #roi .roi-kpi b{font-size:26px;color:var(--sky-deep);letter-spacing:-.02em;}
+      #roi .roi-kpi.big b{font-size:30px;color:var(--green);}
+      #roi .roi-note{color:var(--muted);font-size:12.5px;margin-top:14px;}
+      @media(max-width:760px){#roi .roi-card{grid-template-columns:1fr;}}
+    </style>
+    <style>
+      .marquee-track .logo-chip{display:inline-flex;align-items:center;gap:11px;white-space:nowrap;font-weight:800;font-size:17px;color:#2a3340;opacity:.85;filter:grayscale(1);transition:.25s;}
+      .marquee-track .logo-chip:hover{opacity:1;filter:none;}
+      .marquee-track .logo-chip img{height:36px;width:auto;border-radius:7px;}
+    </style>
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a class="logo" href="#top" aria-label="Jeus.ai 홈">Jeus<span>.ai</span></a>
+      <div class="nav-links">
+        <a href="/solution/">솔루션 소개</a>
+        <a href="#demo">라이브 데모</a>
+        <a href="#roi">ROI 계산기</a>
+        <a href="#finops">FinOps</a>
+        <a href="#process">도입 프로세스</a>
+        <a class="nav-admin" href="/board/?admin=1" title="관리자 답변">관리자</a>
+        <a class="nav-cta" href="/board/">문의하기</a>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <div>
+        <p class="eyebrow">Heliosoft AI Solution Studio</p>
+        <h1>Jeus.ai</h1>
+        <p class="hero-lead">AI 비용, 게이트웨이 하나로 통제됩니다.</p>
+        <p class="hero-copy">
+          Jeus.ai는 ChatGPT·Claude·Gemini 등 모든 LLM 호출이 거쳐가는 비용·거버넌스 게이트웨이입니다. 캐싱·라우팅·프롬프트 최적화로 토큰 비용을 줄이고, 부서별 예산·감사·온프레미스까지 지원합니다. 에이전트 운영은 그 위의 대표 활용 사례입니다.
+        </p>
+        <div class="hero-actions">
+          <a class="primary-button" href="/board/">도입 문의</a>
+          <a class="text-button" href="#demo">라이브 데모 보기</a>
+        </div>
+        <p class="hero-note">온프레미스 설치와 내부망 운영을 고려한 기업형 AI 솔루션</p>
+      </div>
+      <div>
+        <img
+          class="hero-image"
+          src="./assets/hero-finops-dashboard.png"
+          onerror="this.onerror=null;this.src='./hero-finops-dashboard.png';"
+          alt="AI FinOps 비용 대시보드 목업"
+          width="1792"
+          height="1024"
+        />
+      </div>
+    </header>
+
+    <section class="signal-band" aria-label="핵심 지표">
+      <div><b>47</b><span>운영 에이전트 추적</span></div>
+      <div><b>-32.4%</b><span>절감 가능성 분석</span></div>
+      <div><b>5 Layer</b><span>수집부터 경험까지</span></div>
+    </section>
+
+    <section class="customers" aria-label="고객사">
+      <p class="eyebrow">Trusted by</p>
+      <div class="marquee">
+        <div class="marquee-track">
+          <span class="logo-chip"><img src="/assets/logos/daewoo.png" alt="대우능력개발원" /><b>대우능력개발원</b></span>
+          <span class="logo-chip"><img src="/assets/logos/korea-cyber.jpg" alt="고려사이버대학교" /><b>고려사이버대학교</b></span>
+          <img src="/assets/logos/hanbit-softlab.svg" alt="한빛소프트랩" />
+          <img src="/assets/logos/nuri-data.svg" alt="누리데이터" />
+          <img src="/assets/logos/maru-tech.svg" alt="마루테크" />
+          <img src="/assets/logos/core-ai.svg" alt="코어AI솔루션" />
+          <img src="/assets/logos/blue-wave.svg" alt="블루웨이브" />
+          <span class="logo-chip" aria-hidden="true"><img src="/assets/logos/daewoo.png" alt="" /><b>대우능력개발원</b></span>
+          <span class="logo-chip" aria-hidden="true"><img src="/assets/logos/korea-cyber.jpg" alt="" /><b>고려사이버대학교</b></span>
+          <img src="/assets/logos/hanbit-softlab.svg" alt="한빛소프트랩" aria-hidden="true" />
+          <img src="/assets/logos/nuri-data.svg" alt="누리데이터" aria-hidden="true" />
+          <img src="/assets/logos/maru-tech.svg" alt="마루테크" aria-hidden="true" />
+          <img src="/assets/logos/core-ai.svg" alt="코어AI솔루션" aria-hidden="true" />
+          <img src="/assets/logos/blue-wave.svg" alt="블루웨이브" aria-hidden="true" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow">Why now</p>
+        <h2>AI 에이전트는 늘어나는데 비용은 아직 설명되지 않습니다.</h2>
+        <p>
+          AI 도입이 빨라질수록 토큰 비용, GPU 비용, 모델 라우팅 비용은 새로운 운영 리스크가
+          됩니다. 게다가 비용을 무작정 줄이면 응답 품질이 깨집니다 — 진짜 어려운 건 비용과 품질을 동시에 잡는 것입니다. Jeus.fin은 그 리스크를 운영 지표로 바꿉니다.
+        </p>
+      </div>
+      <div class="card-grid">
+        <article class="plain-card">
+          <span class="card-number">01</span>
+          <h3>토큰 비용 블랙박스</h3>
+          <p>어떤 에이전트가 어떤 모델로 얼마나 비용을 쓰는지, 청구서가 오기 전까지 파악하기 어렵습니다.</p>
+        </article>
+        <article class="plain-card">
+          <span class="card-number">02</span>
+          <h3>부서별 배분의 어려움</h3>
+          <p>공용 API 키와 게이트웨이를 함께 쓰면 프로젝트, 부서, 고객 단위의 책임 비용을 나누기 어렵습니다.</p>
+        </article>
+        <article class="plain-card">
+          <span class="card-number">03</span>
+          <h3>예산 초과를 늦게 발견</h3>
+          <p>루프에 빠진 에이전트나 갑작스러운 트래픽 증가를 실시간으로 막지 못하면 손실이 커집니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section solution-band" id="finops">
+      <div class="split">
+        <div>
+          <p class="eyebrow">First solution</p>
+          <h2>Jeus.fin, Agent FinOps를 먼저 공개합니다.</h2>
+          <p>
+            FinOps 솔루션은 기존 에이전트 코드 변경을 최소화하면서 LLM 호출을 게이트웨이로
+            모으고, 비용 측정, 예산 통제, 최적화 제안을 하나의 흐름으로 제공합니다.
+          </p>
+          <p>
+            <strong>핵심은 비용을 줄이는 것이 아니라, 품질을 지키면서 줄이는 것입니다.</strong>
+            Jeus.ai의 핵심 기술은 응답 품질을 실시간으로 측정해 <strong>품질이 유지되는 범위에서만</strong>
+            캐시·모델 라우팅·강등을 적용하는 <strong>품질 보존 최적화(Quality-Aware Optimization)</strong>입니다.
+            품질 저하 신호가 감지되면 자동으로 더 강한 모델로 되돌려, 절감이 품질을 해치지 않게 합니다.
+          </p>
+          <ul class="check-list">
+            <li>L1 수집: OpenAI 호환 게이트웨이에서 토큰과 호출 비용을 계측</li>
+            <li>L2 저장: tenant, project, agent, run, step 단위로 비용 저장</li>
+            <li>L3 통제: 예산 알림, 강등, 하드컷, 루프 감지</li>
+            <li>L4 품질 보존 최적화: 품질 점수를 지키는 선에서만 캐시·모델 라우팅·강등 적용 (품질↔비용 트레이드오프 분석)</li>
+            <li>L5 경험: 경영, 운영, 개발, 거버넌스 대시보드 제공</li>
+          </ul>
+          <p class="hero-copy" style="margin-top:14px;font-size:13.5px;color:var(--sub)">
+            ✓ 품질 게이트·자동 원복·복잡도 라우팅은 실제 시스템 테스트로 검증됨 — 단위 59건 + E2E 71건 전체 통과.
+          </p>
+        </div>
+        <div class="metrics-panel" aria-label="Jeus.fin 주요 화면">
+          <div class="panel-top"><span>Jeus.fin</span><b>Live cost control</b></div>
+          <div class="metric-row"><span>이번 달 LLM 비용</span><b>₩2,484,200</b></div>
+          <div class="metric-row"><span>예상 절감액</span><b class="good">₩780,000</b></div>
+          <div class="metric-row"><span>응답 품질 유지</span><b class="good">98.7%</b></div>
+          <div class="budget-gauge" aria-hidden="true"><i></i></div>
+          <div class="agent-rows">
+            <span style="--w: 92%"></span>
+            <span style="--w: 74%"></span>
+            <span style="--w: 58%"></span>
+            <span style="--w: 41%"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roi">
+      <div class="section-head">
+        <p class="eyebrow">ROI calculator</p>
+        <h2>우리 회사는 얼마를 아낄 수 있을까요?</h2>
+        <p>월 LLM·에이전트 비용을 입력하면 Jeus.fin 적용 시 예상 절감액을 바로 계산해 드립니다.</p>
+      </div>
+      <div class="roi-card">
+        <div class="roi-inputs">
+          <label>월 LLM 비용 (원)
+            <input type="number" id="roi-cost" value="3000000" min="0" step="100000" inputmode="numeric" />
+          </label>
+          <label>적용 강도: <b id="roi-rate-label">표준 (32%)</b>
+            <input type="range" id="roi-rate" min="15" max="50" value="32" />
+            <small>보수적 15% · 표준 32% · 적극 50% — 시맨틱 캐시·3티어 라우팅·스킬패커 합산 가정</small>
+          </label>
+        </div>
+        <div class="roi-out">
+          <div class="roi-kpi"><span>월 절감액</span><b id="roi-month">—</b></div>
+          <div class="roi-kpi"><span>연간 절감액</span><b id="roi-year">—</b></div>
+          <div class="roi-kpi big"><span>3년 누적 절감</span><b id="roi-3y">—</b></div>
+        </div>
+      </div>
+      <p class="roi-note">* 실제 절감률은 워크로드·캐시 적중률·모델 구성에 따라 달라집니다. 정확한 수치는 2~4주 PoC로 측정합니다.</p>
+      <div class="hero-actions" style="margin-top:18px"><a class="primary-button" href="/board/">우리 환경으로 PoC 문의 &rarr;</a></div>
+    </section>
+
+    <section class="section demo-section" id="demo">
+      <div class="demo-head">
+        <div>
+          <p class="eyebrow">Live demo</p>
+          <h2>Jeus.fin 대시보드를 지금 바로 둘러보세요.</h2>
+          <p>
+            실제 운영 화면 그대로입니다. 관제 개요부터 에이전트 정책, 재무·거버넌스,
+            예측·이상감지까지 메뉴를 눌러 직접 확인해 보세요. (데모는 샘플 데이터로 구동됩니다.)
+          </p>
+          <span class="demo-tag">● 샘플 데이터로 라이브 구동 중</span>
+        </div>
+        <a class="text-button" href="/demo/" target="_blank" rel="noopener">전체화면으로 열기 ↗</a>
+      </div>
+      <div class="demo-frame-wrap">
+        <iframe src="/demo/" title="Jeus.fin 라이브 데모 대시보드" loading="lazy"></iframe>
+      </div>
+      <p class="demo-note">화면 안에서 좌측 메뉴를 클릭해 8개 뷰를 전환할 수 있습니다. 모든 수치는 시연용 샘플이며 5초마다 갱신됩니다.</p>
+    </section>
+
+    <section class="section" id="solutions">
+      <div class="section-head">
+        <p class="eyebrow">Solution roadmap</p>
+        <h2>Jeus.ai는 실제 솔루션을 계속 올리는 허브로 확장됩니다.</h2>
+        <p>
+          현재는 FinOps를 첫 제품으로 전면 배치하고, 이후 문서 AI, 거버넌스, 운영 자동화
+          솔루션을 같은 구조 안에서 추가할 수 있게 설계했습니다.
+        </p>
+      </div>
+      <div class="card-grid">
+        <article class="solution-card">
+          <div class="card-topline"><span>First launch</span><em>공개 준비 중</em></div>
+          <h3>Jeus.fin</h3>
+          <strong>Agent FinOps</strong>
+          <p>LLM 에이전트 운영 비용을 실시간으로 측정하고, 예산 통제와 최적화 인사이트까지 연결합니다.</p>
+        </article>
+        <article class="solution-card">
+          <div class="card-topline"><span>Next</span><em>예정</em></div>
+          <h3>Jeus.doc</h3>
+          <strong>문서 AI 자동화</strong>
+          <p>문서 검색, 요약, 검토 자동화를 기업 업무 흐름에 맞춰 확장할 수 있는 솔루션 영역입니다.</p>
+        </article>
+        <article class="solution-card">
+          <div class="card-topline"><span>Next</span><em>예정</em></div>
+          <h3>Jeus.gov</h3>
+          <strong>AI 거버넌스</strong>
+          <p>사내 AI 사용 현황, 정책 준수, 민감정보 리스크를 한 화면에서 관리하는 영역으로 확장됩니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section trust-section">
+      <div class="section-head">
+        <p class="eyebrow">Enterprise ready</p>
+        <h2>데이터는 고객 환경 안에, 통제는 운영 화면 안에.</h2>
+        <p>Jeus.ai는 기업 내부 도입을 전제로 한 AI 솔루션 포트폴리오를 담는 홈페이지입니다.</p>
+      </div>
+      <div class="card-grid">
+        <article class="plain-card compact">
+          <h3>온프레미스 설치</h3>
+          <p>고객 인프라 안에 설치해 프롬프트, 응답, 비용 데이터가 외부로 나가지 않는 구조를 지향합니다.</p>
+        </article>
+        <article class="plain-card compact">
+          <h3>멀티 모델 연동</h3>
+          <p>OpenAI, Azure OpenAI, Anthropic, 내부 LLM까지 하나의 게이트웨이 정책 아래로 통합합니다.</p>
+        </article>
+        <article class="plain-card compact">
+          <h3>운영 통제 내장</h3>
+          <p>예산, 알림, 차단, 감사 로그를 함께 제공해 AI 운영을 비용과 보안 관점에서 관리합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section process-section" id="process">
+      <div class="section-head">
+        <p class="eyebrow">Process</p>
+        <h2>도입은 4단계면 충분합니다.</h2>
+      </div>
+      <div class="process-grid">
+        <article class="process-card"><span>01</span><h3>도입 상담</h3><p>현재 AI 사용 환경과 비용 관리 과제를 함께 정리합니다.</p></article>
+        <article class="process-card"><span>02</span><h3>PoC</h3><p>실제 에이전트 트래픽으로 2~4주 검증을 진행합니다.</p></article>
+        <article class="process-card"><span>03</span><h3>설치 및 연동</h3><p>고객 인프라와 기존 LLM 게이트웨이에 맞춰 배포합니다.</p></article>
+        <article class="process-card"><span>04</span><h3>운영 고도화</h3><p>정책, 대시보드, 최적화 리포트를 운영 기준에 맞게 다듬습니다.</p></article>
+      </div>
+    </section>
+
+    <section class="cta-section" id="contact">
+      <div>
+        <p class="eyebrow">Contact</p>
+        <h2>AI 비용 관리, Jeus.fin으로 먼저 시작하세요.</h2>
+        <p>PoC 일정과 현재 AI 운영 환경을 알려주시면 도입 범위를 함께 잡겠습니다.</p>
+        <div class="hero-actions">
+          <a class="primary-button light" href="/board/">문의 게시판에 남기기</a>
+          <a class="text-button" href="mailto:lilchanho@naver.com" style="color:#fff">lilchanho@naver.com</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>
+        <b>Jeus.ai</b>
+        <p>Heliosoft AI Solution Studio</p>
+      </div>
+      <div class="footer-links">
+        <a href="/solution/">솔루션 소개</a>
+        <a href="#demo">라이브 데모</a>
+        <a href="/board/">문의 게시판</a>
+        <a href="mailto:lilchanho@naver.com">lilchanho@naver.com</a>
+      </div>
+    </footer>
+    <script>
+      (function(){
+        var cost=document.getElementById("roi-cost"),rate=document.getElementById("roi-rate"),
+            lab=document.getElementById("roi-rate-label"),
+            mEl=document.getElementById("roi-month"),yEl=document.getElementById("roi-year"),tEl=document.getElementById("roi-3y");
+        if(!cost) return;
+        var won=function(n){return "₩"+Math.round(n).toLocaleString("ko-KR");};
+        function tier(r){return r<=22?"보수적":r>=43?"적극적":"표준";}
+        function calc(){
+          var c=Math.max(0,+cost.value||0), r=+rate.value/100;
+          lab.textContent=tier(+rate.value)+" ("+rate.value+"%)";
+          var m=c*r; mEl.textContent=won(m); yEl.textContent=won(m*12); tEl.textContent=won(m*36);
+        }
+        cost.addEventListener("input",calc); rate.addEventListener("input",calc); calc();
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="44" viewBox="0 0 230 44">
+  <g transform="translate(2,6)">
+    <path d="M16 4 L27 8 V17 C27 23 22 27 16 29 C10 27 5 23 5 17 V8 Z" fill="#8a1b2b"/>
+    <text x="16" y="21" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">KCU</text>
+  </g>
+  <text x="44" y="28" font-family="'Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="700" fill="#2a3340">고려사이버대학교</text>
+</svg>

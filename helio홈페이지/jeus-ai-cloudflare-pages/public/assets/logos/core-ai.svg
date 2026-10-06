@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="44" viewBox="0 0 230 44">
+  <g transform="translate(2,6)">
+    <circle cx="16" cy="16" r="13" fill="#6f42c1"/>
+    <text x="16" y="21" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="800" fill="#ffffff">AI</text>
+  </g>
+  <text x="44" y="28" font-family="'Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="700" fill="#2a3340">코어AI솔루션</text>
+</svg>

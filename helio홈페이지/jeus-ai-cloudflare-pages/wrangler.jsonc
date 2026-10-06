@@ -1,0 +1,15 @@
+{
+  "name": "jeus-ai",
+  "main": "worker.js",
+  "compatibility_date": "2026-06-16",
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  "kv_namespaces": [
+    { "binding": "INQUIRIES", "id": "8458c9a73c364b0995edaf0ba17d232e" }
+  ],
+  "send_email": [ { "name": "SEND_MAIL" } ],
+  "vars": {
+    "MAIL_FROM": "noreply@jeus.ai.kr",
+    "NOTIFY_TO": "se0007@naver.com",
+    "NOTIFY_FROM": "Jeus.ai 문의 <onboarding@resend.dev>"
+  }
+}

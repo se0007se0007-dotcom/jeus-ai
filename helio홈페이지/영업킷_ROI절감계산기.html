@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jeus.fin · AI 비용 절감 계산기</title>
+<style>
+  :root{
+    --blue:#2f6df6; --blue-d:#1e54d4; --ink:#0f1830; --mut:#5b6678;
+    --line:#e6ebf3; --bg:#f5f8ff; --ok:#0fa968; --card:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 18px 60px}
+  .head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .logo{font-weight:800;font-size:20px;letter-spacing:-.5px}
+  .logo .ai{color:var(--blue)}
+  h1{font-size:26px;margin:14px 0 4px;letter-spacing:-.6px}
+  .sub{color:var(--mut);font-size:14.5px;margin-bottom:22px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 20px 22px;box-shadow:0 1px 2px rgba(16,24,48,.04)}
+  .card h2{font-size:15px;margin:0 0 16px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  label{display:block;font-size:14px;font-weight:600;margin:16px 0 7px}
+  label:first-of-type{margin-top:0}
+  .val{color:var(--blue);font-weight:800}
+  input[type=range]{width:100%;accent-color:var(--blue);height:24px}
+  .num{display:flex;align-items:center;gap:8px}
+  .num input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:16px;font-family:inherit;color:var(--ink)}
+  .num span{color:var(--mut);font-size:14px;white-space:nowrap}
+  .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:2px}
+  .seg button{flex:1;border:0;background:#fff;padding:10px;font-size:13.5px;font-family:inherit;cursor:pointer;color:var(--mut);font-weight:600}
+  .seg button.on{background:var(--blue);color:#fff}
+  .res{background:linear-gradient(160deg,#0f1830,#1b2a52);color:#fff;border:0}
+  .res h2{color:#9fb4e8}
+  .big{font-size:40px;font-weight:800;letter-spacing:-1px;color:#fff;margin:2px 0 2px}
+  .big.ok{color:#5ff0b0}
+  .row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px}
+  .row:last-child{border-bottom:0}
+  .row .k{color:#aebbd6}
+  .row .v{font-weight:700}
+  .pill{display:inline-block;background:rgba(95,240,176,.15);color:#5ff0b0;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;margin-top:10px}
+  .note{font-size:12.5px;color:var(--mut);margin-top:18px;line-height:1.6}
+  .cta{display:inline-block;margin-top:16px;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;padding:12px 18px;border-radius:10px;font-size:14.5px}
+  .cta:hover{background:var(--blue-d)}
+  .foot{text-align:center;color:var(--mut);font-size:12.5px;margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><span class="logo">Jeus<span class="ai">.fin</span></span></div>
+  <h1>AI 비용 절감 계산기</h1>
+  <p class="sub">현재 LLM/에이전트 비용을 입력하면, 게이트웨이 최적화(캐싱·라우팅·프롬프트)로 절감 가능한 금액과 도입 효과를 즉시 추정합니다.</p>
+
+  <div class="grid">
+    <!-- INPUTS -->
+    <div class="card">
+      <h2>입력</h2>
+
+      <label>월 LLM/AI 비용 <span class="val" id="spendLbl"></span></label>
+      <div class="num">
+        <input type="number" id="spend" value="3000" min="0" step="100" />
+        <span>만원 / 월</span>
+      </div>
+
+      <label>예상 절감률 <span class="val" id="rateLbl">35%</span></label>
+      <input type="range" id="rate" min="10" max="70" value="35" />
+      <div class="note" style="margin-top:6px">업계 평균: 게이트웨이 30~60%, 시맨틱 캐시 적용 시 최대 73~86%.</div>
+
+      <label>Jeus 요금 모델</label>
+      <div class="seg" id="seg">
+        <button data-m="share" class="on">절감액 연동(%)</button>
+        <button data-m="flat">월 정액</button>
+      </div>
+
+      <div id="shareBox">
+        <label>절감액 중 Jeus 비중 <span class="val" id="shareLbl">20%</span></label>
+        <input type="range" id="share" min="10" max="30" value="20" />
+      </div>
+      <div id="flatBox" style="display:none">
+        <label>월 구독료</label>
+        <div class="num"><input type="number" id="flat" value="100" min="0" step="10" /><span>만원 / 월</span></div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="card res">
+      <h2>예상 효과</h2>
+      <div style="color:#aebbd6;font-size:13.5px">고객사 순절감 (연간)</div>
+      <div class="big ok" id="netYear">—</div>
+      <div class="pill" id="roiPill">ROI —</div>
+
+      <div style="height:14px"></div>
+      <div class="row"><span class="k">현재 연 비용</span><span class="v" id="curYear">—</span></div>
+      <div class="row"><span class="k">총 절감(연)</span><span class="v" id="saveYear">—</span></div>
+      <div class="row"><span class="k">Jeus 비용(연)</span><span class="v" id="feeYear">—</span></div>
+      <div class="row"><span class="k">고객 순절감(월)</span><span class="v" id="netMonth">—</span></div>
+
+      <a class="cta" href="https://jeus.ai.kr/board" target="_blank" rel="noopener">1주 무료 진단 신청 →</a>
+    </div>
+  </div>
+
+  <p class="note">
+    * 본 계산은 입력값과 업계 평균 절감률에 기반한 <b>추정치</b>이며 실제 결과는 워크로드에 따라 다릅니다. 정확한 수치는 1주 진단으로 확정됩니다.
+    절감액 연동 모델에서 "고객 순절감 = 총 절감 − Jeus 비용"으로, 고객은 비용을 들이지 않고도 순수익을 얻는 구조입니다.
+  </p>
+  <p class="foot">Jeus.fin · Agent FinOps · https://jeus.ai.kr</p>
+</div>
+
+<script>
+  var mode = "share";
+  function won(manwon){
+    // manwon = 금액(만원), 반환: 보기 좋은 한글 단위 문자열
+    var v = Math.round(manwon);
+    if (v >= 10000) { // 1억 이상
+      var eok = v/10000;
+      return (Math.round(eok*10)/10).toLocaleString() + "억원";
+    }
+    return v.toLocaleString() + "만원";
+  }
+  function $(id){ return document.getElementById(id); }
+  function calc(){
+    var spend = Math.max(0, parseFloat($("spend").value)||0);   // 만원/월
+    var rate  = parseFloat($("rate").value)/100;
+    var share = parseFloat($("share").value)/100;
+    var flat  = Math.max(0, parseFloat($("flat").value)||0);    // 만원/월
+
+    $("spendLbl").textContent = won(spend)+"/월";
+    $("rateLbl").textContent = Math.round(rate*100)+"%";
+    $("shareLbl").textContent = Math.round(share*100)+"%";
+
+    var saveMonth = spend * rate;                 // 총 절감(만원/월)
+    var feeMonth  = mode==="share" ? saveMonth*share : flat;
+    var netMonth  = saveMonth - feeMonth;
+
+    var curYear  = spend*12, saveYear = saveMonth*12, feeYear = feeMonth*12, netYear = netMonth*12;
+
+    $("curYear").textContent  = won(curYear);
+    $("saveYear").textContent = won(saveYear);
+    $("feeYear").textContent  = won(feeYear);
+    $("netMonth").textContent = won(netMonth);
+    $("netYear").textContent  = won(netYear);
+
+    var roi = feeYear>0 ? (netYear/feeYear) : 0;
+    $("roiPill").textContent = feeYear>0 ? ("투자 대비 약 "+ (Math.round(roi*10)/10) +"배 절감") : "비용 0 · 순절감";
+  }
+  document.querySelectorAll("#seg button").forEach(function(b){
+    b.onclick=function(){
+      document.querySelectorAll("#seg button").forEach(function(x){x.classList.remove("on")});
+      b.classList.add("on"); mode=b.dataset.m;
+      $("shareBox").style.display = mode==="share"?"block":"none";
+      $("flatBox").style.display  = mode==="flat"?"block":"none";
+      calc();
+    };
+  });
+  ["spend","rate","share","flat"].forEach(function(id){
+    $(id).addEventListener("input", calc);
+  });
+  calc();
+</script>
+</body>
+</html>
